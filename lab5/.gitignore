@@ -1,0 +1,12 @@
+build_sim/
+build_verilator/
+*.jou
+*.log
+*.str
+.Xil/
+*.cache/
+*.hw/
+*.sim/
+*.runs/
+*.gen/
+*.ip_user_files/
