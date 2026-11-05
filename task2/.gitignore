@@ -1,0 +1,10 @@
+task2.cache/
+task2.gen/
+task2.hw/
+task2.ip_user_files/
+task2.runs/
+task2.sim/
+task2.srcs/
+.Xil/
+*.jou
+*.log
