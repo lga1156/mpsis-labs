@@ -22,6 +22,8 @@ module riscv_unit(
     output logic        vga_vs_o
 );
     
+import peripheral_pkg::*;
+
 logic sysclk, rst;
 sys_clk_rst_gen divider(
     .ex_clk_i     (clk_i),
@@ -59,9 +61,9 @@ assign out = 256'd1 << lsu_mem_addr[31:24];
 logic  ext_mem_req;
 logic  ps2_req;
 logic  vga_req;
-assign ext_mem_req = lsu_mem_req & out[0];
-assign ps2_req     = lsu_mem_req & out[3];
-assign vga_req     = lsu_mem_req & out[7];
+assign ext_mem_req = lsu_mem_req & out[DMEM_ADDR_HIGH];
+assign ps2_req     = lsu_mem_req & out[PS2_ADDR_HIGH];
+assign vga_req     = lsu_mem_req & out[VGA_ADDR_HIGH];
 
 logic [31:0] ext_mem_rd;
 logic [31:0] ps2_rd;
@@ -75,9 +77,9 @@ assign periph_unit_addr = lsu_mem_addr[31:24];
 
 always_comb begin
     case (periph_unit_addr)
-        0: mem_lsu_rd = ext_mem_rd;
-        3: mem_lsu_rd = ps2_rd;
-        7: mem_lsu_rd = vga_rd;
+        DMEM_ADDR_HIGH: mem_lsu_rd = ext_mem_rd;
+        PS2_ADDR_HIGH: mem_lsu_rd = ps2_rd;
+        VGA_ADDR_HIGH: mem_lsu_rd = vga_rd;
         default: mem_lsu_rd = ext_mem_rd;
     endcase
 end

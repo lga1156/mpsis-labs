@@ -1,7 +1,10 @@
 `timescale 1ns/1ps
 module tb_ps2_vga;
 logic clk=0, resetn=0, kc=1, kd=1;
-always #5 clk=~clk;
+bit test_done=0;
+initial begin
+ while (!test_done) begin #5; clk=~clk; end
+end
 riscv_unit dut(.clk_i(clk),.resetn_i(resetn),.sw_i(16'b0),.kclk_i(kc),.kdata_i(kd),.rx_i(1'b1));
 time last_hs=0, last_vs=0;
 int hs_periods=0, vs_periods=0;
@@ -57,7 +60,8 @@ initial begin
  if (hs_periods<1000 || vs_periods<2) $fatal(1,"VGA timing not exercised");
  $display("PASS: PS2 break sequence F0,1C produces NUL,a as official firmware specifies; VGA HS=32us VS=16.8ms");
  $display("PASS: abc in VGA RAM; 3 traps, PS2 reads, VGA store instructions (6 bus cycles) and mret; IRQ cleared");
+ test_done=1;
  $finish;
 end
-initial begin #40000000; $fatal(1,"timeout"); end
+initial begin #40000000; if (!test_done) $fatal(1,"timeout"); end
 endmodule

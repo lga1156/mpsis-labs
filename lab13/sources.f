@@ -1,3 +1,4 @@
+rtl/peripheral_pkg.sv
 rtl/alu_opcodes_pkg.sv
 rtl/riscv_pkg.sv
 rtl/csr_pkg.sv
