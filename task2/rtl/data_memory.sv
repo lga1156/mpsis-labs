@@ -13,8 +13,6 @@ module data_mem (
 
   logic [31:0] ram [DATA_MEM_SIZE_WORDS];
 
-  initial $readmemh("data.mem", ram);
-
   assign ready_o = 1'b1;
 
   always_ff @(posedge clk_i) begin

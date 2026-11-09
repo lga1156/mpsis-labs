@@ -8,3 +8,4 @@ task2.srcs/
 .Xil/
 *.jou
 *.log
+build_vivado/

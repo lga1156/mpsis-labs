@@ -13,17 +13,16 @@ module tb_progression;
   wire [31:0] result = dut.datamem.ram[2];
 
   // Каждый пример занимает 400 нс: сброс, выполнение, пауза с ответом.
-  task automatic demo(input int id, input int step_d,
+  task automatic demo(input int id, input logic [31:0] first_a, input int step_d,
                       input int number_n, input logic [31:0] expected);
     case_id = id;
     rst = 1;
     repeat (3) @(negedge clk);
-    // Первый пример использует исходный data.mem без перезаписи.
-    if (id != 1) begin
-      dut.datamem.ram[0] = 32'd1;
-      dut.datamem.ram[1] = (step_d << 8) | number_n;
-      dut.datamem.ram[2] = 32'd0;
-    end
+    // Тестбенч задаёт входы в ОЗУ до снятия сброса во всех трёх примерах.
+    // Ответ затем вычисляет и записывает в ram[2] сам процессор.
+    dut.datamem.ram[0] = first_a;
+    dut.datamem.ram[1] = (step_d << 8) | number_n;
+    dut.datamem.ram[2] = 32'd0;
     rst = 0;
     repeat (27) @(negedge clk);
     if (dut.IM_A !== 32'h34 || result !== expected)
@@ -37,9 +36,9 @@ module tb_progression;
   endtask
 
   initial begin
-    demo(1,   2, 3,   5);  // Пример из задания: 1, 3, 5.
-    demo(2,   2, 1,   1);  // Первый член: цикл сложений пропускается.
-    demo(3, 128, 3, 257);  // d беззнаковое: 1, 129, 257.
+    demo(1, 1,   2, 3,   5);  // Пример из задания: 1, 3, 5.
+    demo(2, 1,   2, 1,   1);  // Первый член: цикл сложений пропускается.
+    demo(3, 1, 128, 3, 257);  // d беззнаковое: 1, 129, 257.
     $display("PASS: 3 demonstration cases");
     $finish;
   end
